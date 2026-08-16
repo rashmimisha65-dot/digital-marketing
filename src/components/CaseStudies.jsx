@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import './CaseStudies.css';
-import caseStudyImg from '../assets/case_study_dashboard.jpg';
+import caseStudyImg1 from '../assets/case_study_1.jpeg';
+import caseStudyImg2 from '../assets/case_study_2.jpeg';
 
 const CaseStudies = () => {
   const containerRef = useRef(null);
@@ -32,9 +33,9 @@ const CaseStudies = () => {
   }, []);
 
   const cases = [
-    { client: 'TechNova', result: '+340% Traffic', desc: 'Complete SEO & Content overhaul leading to industry dominance.' },
-    { client: 'AuraRetail', result: '12x ROAS', desc: 'Performance max campaigns scaled internationally.' },
-    { client: 'NexusSaaS', result: '-40% CPA', desc: 'Conversion rate optimization and landing page redesign.' }
+    { client: 'TechNova', result: '+340% Traffic', desc: 'Complete SEO & Content overhaul leading to industry dominance.', img: caseStudyImg1 },
+    { client: 'AuraRetail', result: '12x ROAS', desc: 'Performance max campaigns scaled internationally.', img: caseStudyImg2 },
+    { client: 'NexusSaaS', result: '-40% CPA', desc: 'Conversion rate optimization and landing page redesign.', img: caseStudyImg1 }
   ];
 
   return (
@@ -48,7 +49,7 @@ const CaseStudies = () => {
         {cases.map((cs, index) => (
           <div key={index} className="case-card glass-panel">
             <div className="case-img-container">
-              <img src={caseStudyImg} alt={`Case Study ${cs.client}`} className="case-img" />
+              <img src={cs.img} alt={`Case Study ${cs.client}`} className="case-img" />
               <div className="case-result-badge">{cs.result}</div>
             </div>
             <div className="case-content">

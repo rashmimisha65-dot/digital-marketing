@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { Search, Megaphone, Share2, PenTool, Globe, Target } from 'lucide-react';
 import './Services.css';
-import servicesAbstract from '../assets/services_abstract.jpg';
+import servicesAbstract from '../assets/services_bg.jpeg';
 
 const Services = () => {
   const sectionRef = useRef(null);
