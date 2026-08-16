@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { ArrowRight, Play } from 'lucide-react';
 import gsap from 'gsap';
 import './Hero.css';
-import heroBg from '../assets/hero_bg.jpg';
+import heroVideo from '../assets/Data_streams_moving_upwards_1080p_202608161024.mp4';
 
 const Hero = () => {
   const heroRef = useRef(null);
@@ -35,9 +35,24 @@ const Hero = () => {
       "-=1.2"
     );
 
-    // Subtle parallax
+    // Proper ScrollTrigger cinematic effect
     gsap.to(imageRef.current, {
-      yPercent: 20,
+      yPercent: 30,
+      scale: 1.15,
+      opacity: 0.2,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: heroRef.current,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true
+      }
+    });
+
+    gsap.to('.hero-text-wrapper', {
+      y: -150,
+      opacity: 0,
+      scale: 0.9,
       ease: 'none',
       scrollTrigger: {
         trigger: heroRef.current,
@@ -53,7 +68,7 @@ const Hero = () => {
     <section ref={heroRef} className="hero">
       <div className="hero-bg-container">
         <div className="hero-overlay"></div>
-        <img ref={imageRef} src={heroBg} alt="Digital Marketing Dashboard" className="hero-bg-image" />
+        <video ref={imageRef} src={heroVideo} autoPlay loop muted playsInline className="hero-bg-image" />
       </div>
       
       <div className="container hero-content">
