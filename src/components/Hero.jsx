@@ -1,8 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { ArrowRight, Play } from 'lucide-react';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './Hero.css';
 import heroVideo from '../assets/Data_streams_moving_upwards_1080p_202608161024.mp4';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
   const heroRef = useRef(null);
@@ -12,56 +15,75 @@ const Hero = () => {
   const imageRef = useRef(null);
 
   useEffect(() => {
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    const videoEl = imageRef.current;
 
-    // Split text animation would ideally use SplitText plugin, but we'll simulate with CSS lines
-    tl.fromTo(headlineRef.current, 
-      { y: 100, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1.2, delay: 0.2 }
-    )
-    .fromTo(subheadRef.current,
-      { y: 50, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1 },
-      "-=0.8"
-    )
-    .fromTo(ctaRef.current,
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8 },
-      "-=0.6"
-    )
-    .fromTo(imageRef.current,
-      { scale: 1.1, opacity: 0, filter: 'blur(10px)' },
-      { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 1.5, ease: 'power2.out' },
-      "-=1.2"
-    );
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-    // Proper ScrollTrigger cinematic effect
-    gsap.to(imageRef.current, {
-      yPercent: 30,
-      scale: 1.15,
-      opacity: 0.2,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: heroRef.current,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: true
+      // Split text animation would ideally use SplitText plugin, but we'll simulate with CSS lines
+      tl.fromTo(headlineRef.current, 
+        { y: 100, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.2, delay: 0.2 }
+      )
+      .fromTo(subheadRef.current,
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1 },
+        "-=0.8"
+      )
+      .fromTo(ctaRef.current,
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8 },
+        "-=0.6"
+      );
+
+      // Intro reveal for the video background (separate from the scroll-driven tween)
+      gsap.fromTo(imageRef.current,
+        { scale: 1.1, opacity: 0, filter: 'blur(10px)' },
+        { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 1.5, ease: 'power2.out', delay: 0.2 }
+      );
+
+      // Proper ScrollTrigger cinematic effect on the video
+      gsap.to(imageRef.current, {
+        yPercent: 30,
+        scale: 1.15,
+        opacity: 0.2,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+
+      gsap.to('.hero-text-wrapper', {
+        y: -150,
+        opacity: 0,
+        scale: 0.9,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+    }, heroRef);
+
+    // Recalculate trigger positions once the video has real dimensions/duration
+    const handleReady = () => ScrollTrigger.refresh();
+    if (videoEl) {
+      videoEl.addEventListener('loadedmetadata', handleReady);
+      videoEl.addEventListener('loadeddata', handleReady);
+    }
+
+    return () => {
+      if (videoEl) {
+        videoEl.removeEventListener('loadedmetadata', handleReady);
+        videoEl.removeEventListener('loadeddata', handleReady);
       }
-    });
-
-    gsap.to('.hero-text-wrapper', {
-      y: -150,
-      opacity: 0,
-      scale: 0.9,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: heroRef.current,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: true
-      }
-    });
-
+      ctx.revert();
+    };
   }, []);
 
   return (

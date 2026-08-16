@@ -1,8 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Volume2, VolumeX, Play } from 'lucide-react';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './Showreel.css';
 import showreelVideo from '../assets/Data_streams_moving_upwards_1080p_202608161024.mp4';
+
+gsap.registerPlugin(ScrollTrigger);
 const Showreel = () => {
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -29,16 +32,35 @@ const Showreel = () => {
 
   // Parallax on scroll
   useEffect(() => {
-    gsap.to(visualsRef.current, {
-      yPercent: 15,
-      ease: "none",
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: true
+    const videoEl = videoRef.current;
+
+    const ctx = gsap.context(() => {
+      gsap.to(visualsRef.current, {
+        yPercent: 15,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true
+        }
+      });
+    }, sectionRef);
+
+    // Recalculate trigger positions once the video is ready
+    const handleReady = () => ScrollTrigger.refresh();
+    if (videoEl) {
+      videoEl.addEventListener('loadedmetadata', handleReady);
+      videoEl.addEventListener('loadeddata', handleReady);
+    }
+
+    return () => {
+      if (videoEl) {
+        videoEl.removeEventListener('loadedmetadata', handleReady);
+        videoEl.removeEventListener('loadeddata', handleReady);
       }
-    });
+      ctx.revert();
+    };
   }, []);
 
   return (
