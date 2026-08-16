@@ -2,35 +2,29 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Volume2, VolumeX, Play } from 'lucide-react';
 import gsap from 'gsap';
 import './Showreel.css';
-import heroBg from '../assets/hero_bg.jpg';
-
+import showreelVideo from '../assets/Data_streams_moving_upwards_1080p_202608161024.mp4';
 const Showreel = () => {
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const sectionRef = useRef(null);
-  const audioRef = useRef(null);
+  const videoRef = useRef(null);
   const visualsRef = useRef(null);
 
   const toggleMute = () => {
-    if (audioRef.current) {
-      audioRef.current.muted = !isMuted;
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
       setIsMuted(!isMuted);
     }
   };
 
   const playShowreel = () => {
     setIsPlaying(true);
-    if (audioRef.current) {
-      audioRef.current.play();
+    if (videoRef.current) {
+      videoRef.current.play();
     }
     
-    // Simulate cinematic visual transitions
     const tl = gsap.timeline();
-    tl.to('.showreel-play-overlay', { opacity: 0, duration: 0.5, display: 'none' })
-      .fromTo('.showreel-visual-img', 
-        { scale: 1.2, filter: 'blur(10px)' }, 
-        { scale: 1, filter: 'blur(0px)', duration: 4, ease: 'power2.out' }
-      );
+    tl.to('.showreel-play-overlay', { opacity: 0, duration: 0.5, display: 'none' });
   };
 
   // Parallax on scroll
@@ -52,8 +46,14 @@ const Showreel = () => {
       <div className="container">
         <div className="showreel-wrapper glass-panel">
           <div className="showreel-visuals" ref={visualsRef}>
-            {/* Placeholder for video file */}
-            <img src={heroBg} alt="Showreel Scene" className="showreel-visual-img" />
+            <video 
+              ref={videoRef} 
+              className="showreel-visual-img" 
+              src={showreelVideo} 
+              muted={isMuted} 
+              loop 
+              playsInline 
+            />
             <div className="showreel-overlay"></div>
           </div>
           
@@ -75,12 +75,6 @@ const Showreel = () => {
               </button>
             </div>
           )}
-
-          {/* ElevenLabs Audio Placeholder */}
-          <audio ref={audioRef} muted={isMuted} loop>
-            <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg" />
-            Your browser does not support the audio element.
-          </audio>
         </div>
       </div>
     </section>
